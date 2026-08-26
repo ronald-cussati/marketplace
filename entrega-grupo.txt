@@ -1,0 +1,53 @@
+================================================================================
+RELATÓRIO DE IDENTIFICAÇÃO E ENTREGA DO PROJETO — MULTIVIX
+================================================================================
+
+1. IDENTIFICAÇÃO INSTITUCIONAL E DO PROJETO
+--------------------------------------------------------------------------------
+Instituição: Faculdade Multivix
+Curso: Bacharelado em Sistemas de Informação
+Disciplina: Projeto Interdisciplinar / Engenharia de Software
+Tema do Projeto: Marketplace Digital para Pequenos Produtores e Artesãos Locais
+Nome de Trabalho do Projeto: FeiraLocal
+
+2. INTEGRANTES DO GRUPO (6 INTEGRANTES)
+--------------------------------------------------------------------------------
+1. Ronald Cussati (Desenvolvimento Full-Stack & Supabase)
+2. [Nome Completo do Integrante 2] (Engenharia de Requisitos & BPMN)
+3. [Nome Completo do Integrante 3] (Modelagem de Dados & Arquitetura)
+4. [Nome Completo do Integrante 4] (Design de Interface & Frontend)
+5. [Nome Completo do Integrante 5] (Qualidade, Testes & Usabilidade)
+6. [Nome Completo do Integrante 6] (DevOps, Deploy & Documentação)
+
+3. LINKS OFICIAIS DE ENTREGA E EVIDÊNCIAS
+--------------------------------------------------------------------------------
+• Repositório no GitHub:
+  https://github.com/ronald-cussati/marketplace
+
+• Pasta Pública do Google Drive (Vídeos de Apresentação, Testes e Evidências):
+  https://drive.google.com/drive/folders/PASTA_PUBLICA_DO_GRUPO_AQUI?usp=sharing
+
+• Projeto Banco de Dados & Auth (Supabase):
+  https://hzccqgzcttjsemshbqey.supabase.co
+  Projeto Ref: hzccqgzcttjsemshbqey (Região: us-west-2)
+
+• URL da Aplicação em Produção (Vercel):
+  https://marketplace-local.vercel.app
+
+4. RESUMO DOS ENTREGÁVEIS CONCLUÍDOS
+--------------------------------------------------------------------------------
+[X] 01 - Documento de Visão do Projeto (docs/01-documento-visao.md)
+[X] 02 - Backlog / EAP com Priorização MoSCoW (docs/02-backlog-eap-moscow.md)
+[X] 03 - Documento de Requisitos e Histórias de Usuário BDD (docs/03-documento-requisitos.md)
+[X] 04 - Diagrama BPMN do Fluxo de Compra Ponta a Ponta (docs/04-diagrama-bpmn.md)
+[X] 05 - Modelagem de Dados: MER + DER + Políticas RLS (docs/05-modelagem-dados-mer.md)
+[X] 06 - Diagrama de Arquitetura em Camadas e Gateway Mock (docs/06-diagrama-arquitetura.md)
+[X] 07 - Protótipo de Interface de Alta Fidelidade (docs/07-prototipo-interface.md)
+[X] 08 - Manual de Instalação e Execução Local (docs/08-manual-implantacao-local.md)
+[X] 09 - Plano de Testes Funcionais e Usabilidade SUS (docs/09-plano-testes-evidencias.md)
+[X] 10 - Roteiro de Implantação em Nuvem Gratuita Vercel (docs/10-roteiro-implantacao-nuvem.md)
+[X] 11 - Código-fonte Versionado no Git com README Completo (README.md)
+[X] 12 - Roteiro da Apresentação Final em Vídeo de 15 a 20 min (docs/12-roteiro-apresentacao.md)
+[X] 13 - Arquivo .txt do Grupo Preenchido (entrega-grupo.txt)
+
+================================================================================
