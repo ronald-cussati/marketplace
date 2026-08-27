@@ -24,11 +24,16 @@ import {
   MapPin,
   Clock,
   UserCheck,
+  Lock,
+  User,
+  LogIn,
+  UserPlus,
+  AlertCircle,
 } from "lucide-react";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { user, usuario } = useAuth();
+  const { user, usuario, signIn } = useAuth();
   const { items, subtotal, clearCart } = useCart();
   const { toast } = useToast();
 
@@ -48,6 +53,7 @@ export default function CheckoutPage() {
 
   const [copiadoPix, setCopiadoPix] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isQuickLoggingIn, setIsQuickLoggingIn] = useState(false);
 
   useEffect(() => {
     if (usuario) {
@@ -57,9 +63,6 @@ export default function CheckoutPage() {
     } else if (user) {
       setEmail(user.email || "");
       setNome("Comprador da Feira");
-    } else {
-      setNome("Comprador Convidado");
-      setEmail("comprador@feiralocal.com");
       setTelefone("(27) 99876-5432");
     }
   }, [usuario, user]);
@@ -81,8 +84,25 @@ export default function CheckoutPage() {
     toast("Cartão de teste simulado preenchido!", "info");
   };
 
+  const handleQuickLoginBuyer = async () => {
+    setIsQuickLoggingIn(true);
+    const res = await signIn("comprador@email.com", "senha123");
+    if (!res.error) {
+      toast("Autenticado como Comprador Teste!", "success");
+    } else {
+      toast("Erro ao autenticar comprador de teste.", "error");
+    }
+    setIsQuickLoggingIn(false);
+  };
+
   const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user && !usuario) {
+      toast("É obrigatório entrar em uma conta antes de finalizar o pedido!", "error");
+      return;
+    }
+
     if (items.length === 0) {
       toast("Sua cesta está vazia!", "error");
       router.push("/");
@@ -144,32 +164,109 @@ export default function CheckoutPage() {
     );
   }
 
+  const isUserAuthenticated = !!user || !!usuario;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Back Button */}
       <Link
         href="/carrinho"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary-700 transition-colors"
+        className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-primary-700 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" /> Voltar para a Cesta
       </Link>
 
       <div className="space-y-1">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] sm:text-xs font-bold">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Ambiente de Pagamento Simulado (Mock Gateway)</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           Finalizar Pedido Simulado
         </h1>
       </div>
 
-      <form onSubmit={handleConfirmOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* 🔐 AUTHENTICATION REQUIRED BARRIER (If not logged in) */}
+      {!isUserAuthenticated && (
+        <div className="bg-amber-50 border-2 border-amber-300 rounded-3xl p-6 sm:p-8 space-y-4 shadow-lg animate-in fade-in zoom-in-95">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-600 text-white flex items-center justify-center flex-shrink-0 shadow-md">
+              <Lock className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-extrabold text-lg text-slate-900">
+                Conta Obrigatória para Finalizar a Compra
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl">
+                Para vincular o pedido ao seu histórico, gerar a Nota Fiscal simulada (NFC-e) e
+                garantir a separação correta pelo produtor, você precisa estar autenticado em uma conta.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+            <Link href="/login" className="w-full sm:w-auto">
+              <Button
+                variant="primary"
+                size="md"
+                className="w-full font-bold"
+                leftIcon={<LogIn className="w-4 h-4" />}
+              >
+                Entrar na Minha Conta
+              </Button>
+            </Link>
+
+            <Link href="/cadastro" className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                size="md"
+                className="w-full font-bold"
+                leftIcon={<UserPlus className="w-4 h-4" />}
+              >
+                Criar Nova Conta
+              </Button>
+            </Link>
+
+            <Button
+              variant="amber"
+              size="md"
+              isLoading={isQuickLoggingIn}
+              onClick={handleQuickLoginBuyer}
+              className="w-full sm:w-auto font-bold shadow-md shadow-amber-600/30"
+              leftIcon={<Sparkles className="w-4 h-4" />}
+            >
+              ⚡ Entrar com Conta Teste (1 Clique)
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Identified Buyer Badge */}
+      {isUserAuthenticated && (
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
+              <UserCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-emerald-950 text-sm block">
+                Comprador Identificado: {usuario?.nome || "Maria Silva"}
+              </span>
+              <span className="text-emerald-700">{usuario?.email || user?.email}</span>
+            </div>
+          </div>
+          <Link href="/login" className="text-primary-800 font-bold hover:underline">
+            Trocar de conta →
+          </Link>
+        </div>
+      )}
+
+      <form onSubmit={handleConfirmOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* Left Form: Buyer info & Payment Method */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-6 sm:space-y-8">
           {/* Step 1: Dados do Comprador */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
               <span className="w-7 h-7 rounded-xl bg-primary-100 text-primary-800 flex items-center justify-center text-xs font-black">
                 1
               </span>
@@ -184,9 +281,10 @@ export default function CheckoutPage() {
                 <input
                   type="text"
                   required
+                  disabled={!isUserAuthenticated}
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-slate-100 disabled:text-slate-400"
                 />
               </div>
 
@@ -197,9 +295,10 @@ export default function CheckoutPage() {
                 <input
                   type="email"
                   required
+                  disabled={!isUserAuthenticated}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-slate-100 disabled:text-slate-400"
                 />
               </div>
 
@@ -210,9 +309,10 @@ export default function CheckoutPage() {
                 <input
                   type="text"
                   required
+                  disabled={!isUserAuthenticated}
                   value={telefone}
                   onChange={(e) => setTelefone(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-slate-100 disabled:text-slate-400"
                 />
               </div>
 
@@ -222,8 +322,9 @@ export default function CheckoutPage() {
                 </label>
                 <select
                   value={tipoEntrega}
+                  disabled={!isUserAuthenticated}
                   onChange={(e) => setTipoEntrega(e.target.value as any)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-slate-100"
                 >
                   <option value="retirada">Retirar na Feira Livre / Ponto da Banca</option>
                   <option value="entrega">Entrega Local Direta do Produtor</option>
@@ -237,18 +338,19 @@ export default function CheckoutPage() {
                 <input
                   type="text"
                   required
+                  disabled={!isUserAuthenticated}
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-slate-100"
                 />
               </div>
             </div>
           </div>
 
           {/* Step 2: Método de Pagamento Simulado */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+          <div className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span className="w-7 h-7 rounded-xl bg-primary-100 text-primary-800 flex items-center justify-center text-xs font-black">
                   2
                 </span>
@@ -324,9 +426,9 @@ export default function CheckoutPage() {
 
             {/* Payment Details Sub-pane */}
             {metodoPagamento === "pix" && (
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
+              <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
                 <div className="flex flex-col sm:flex-row items-center gap-6">
-                  <div className="w-36 h-36 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-center flex-shrink-0">
+                  <div className="w-32 h-32 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-center flex-shrink-0">
                     <img
                       src={pixPayload.qrCodeUrl}
                       alt="QR Code Pix Simulado"
@@ -355,7 +457,7 @@ export default function CheckoutPage() {
             )}
 
             {metodoPagamento === "cartao" && (
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
+              <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Dados do Cartão (Simulação)
@@ -365,7 +467,7 @@ export default function CheckoutPage() {
                     onClick={handleFillTestCard}
                     className="text-xs font-bold text-primary-700 hover:underline"
                   >
-                    ⚡ Preencher com Dados de Teste
+                    ⚡ Preencher Cartão de Teste
                   </button>
                 </div>
 
@@ -423,7 +525,7 @@ export default function CheckoutPage() {
             )}
 
             {metodoPagamento === "dinheiro" && (
-              <div className="p-6 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 space-y-2 text-sm">
+              <div className="p-5 sm:p-6 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 space-y-2 text-sm">
                 <h4 className="font-bold flex items-center gap-2">
                   <Banknote className="w-4 h-4 text-amber-700" />
                   Pagamento na Retirada da Feira
@@ -440,8 +542,8 @@ export default function CheckoutPage() {
 
         {/* Right Summary: Review & Final Button */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-6">
-            <h3 className="font-extrabold text-lg text-slate-900 border-b border-slate-100 pb-3">
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-6">
+            <h3 className="font-extrabold text-base sm:text-lg text-slate-900 border-b border-slate-100 pb-3">
               Itens da Cesta ({items.length})
             </h3>
 
@@ -459,7 +561,7 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <div className="pt-4 border-t border-slate-200 space-y-2 text-sm">
+            <div className="pt-4 border-t border-slate-200 space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between text-slate-600">
                 <span>Subtotal</span>
                 <span className="font-semibold text-slate-900">{formatCurrency(subtotal)}</span>
@@ -469,8 +571,8 @@ export default function CheckoutPage() {
                 <span className="text-emerald-600 font-bold">R$ 0,00</span>
               </div>
               <div className="border-t border-slate-200 pt-3 flex justify-between items-baseline">
-                <span className="font-bold text-base text-slate-900">Total a Pagar</span>
-                <span className="font-black text-2xl text-primary-800">
+                <span className="font-bold text-sm sm:text-base text-slate-900">Total a Pagar</span>
+                <span className="font-black text-xl sm:text-2xl text-primary-800">
                   {formatCurrency(subtotal)}
                 </span>
               </div>
@@ -480,10 +582,13 @@ export default function CheckoutPage() {
               type="submit"
               variant="primary"
               size="lg"
+              disabled={!isUserAuthenticated}
               isLoading={isProcessing}
-              className="w-full font-bold shadow-xl shadow-primary-700/20"
+              className="w-full font-bold shadow-xl shadow-primary-700/20 disabled:opacity-50"
             >
-              Confirmar Pagamento Simulado
+              {isUserAuthenticated
+                ? "Confirmar Pagamento Simulado"
+                : "Entre na Conta para Finalizar"}
             </Button>
 
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-1">
