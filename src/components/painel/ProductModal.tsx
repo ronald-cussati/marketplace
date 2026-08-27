@@ -27,11 +27,11 @@ interface ProductModalProps {
 const PRESET_IMAGENS = [
   {
     nome: "Queijo Artesanal",
-    url: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1552767059-ce182ead6c1b?auto=format&fit=crop&w=800&q=80",
   },
   {
     nome: "Mel Puro",
-    url: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?auto=format&fit=crop&w=800&q=80",
   },
   {
     nome: "Pão Rústico",
@@ -39,15 +39,15 @@ const PRESET_IMAGENS = [
   },
   {
     nome: "Hortaliças",
-    url: "https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
   },
   {
     nome: "Artesanato Palha",
-    url: "https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=800&q=80",
   },
   {
     nome: "Geleia",
-    url: "https://images.unsplash.com/photo-1577937927133-66ef06acdf18?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80",
   },
   {
     nome: "Cerâmica",
@@ -55,7 +55,7 @@ const PRESET_IMAGENS = [
   },
   {
     nome: "Café Especial",
-    url: "https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80",
   },
 ];
 

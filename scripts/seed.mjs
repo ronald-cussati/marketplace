@@ -11,93 +11,20 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
 });
 
 async function runSeed() {
-  console.log("🌱 Iniciando Seed do Banco de Dados no Supabase...");
+  console.log("🌱 Sincronizando imagens e produtos no Supabase...");
 
   try {
-    // 1. Criar ou verificar usuário vendedor no Auth
-    const vendorEmail = "produtor@feira.com";
-    const vendorPassword = "senhaSegura123";
-
-    const { data: usersList } = await supabase.auth.admin.listUsers();
-    let vendorAuthUser = usersList?.users?.find((u) => u.email === vendorEmail);
-
-    if (!vendorAuthUser) {
-      console.log(`Criando usuário no Auth: ${vendorEmail}`);
-      const { data: createdAuth, error: authErr } = await supabase.auth.admin.createUser({
-        email: vendorEmail,
-        password: vendorPassword,
-        email_confirm: true,
-        user_metadata: { nome: "José da Silva (Sítio Vista Linda)" },
-      });
-
-      if (authErr) {
-        console.error("Erro ao criar usuário auth:", authErr);
-      } else {
-        vendorAuthUser = createdAuth.user;
-      }
-    } else {
-      console.log(`Usuário auth ${vendorEmail} já existe (${vendorAuthUser.id})`);
-    }
-
-    if (!vendorAuthUser) {
-      console.error("Não foi possível obter ou criar usuário auth.");
+    // 1. Obter vendedor
+    const { data: vendedores } = await supabase.from("vendedores").select("*").limit(1);
+    if (!vendedores || vendedores.length === 0) {
+      console.error("Nenhum vendedor encontrado no banco.");
       return;
     }
+    const vendedorId = vendedores[0].id;
 
-    const userId = vendorAuthUser.id;
+    // 2. Limpar e recadastrar produtos com as fotos corrigidas
+    await supabase.from("produtos").delete().neq("id", "00000000-0000-0000-0000-000000000000");
 
-    // 2. Inserir ou atualizar na tabela usuarios
-    console.log(`Garantindo registro na tabela 'usuarios' (${userId})...`);
-    const { error: userTableErr } = await supabase
-      .from("usuarios")
-      .upsert({
-        id: userId,
-        nome: "José da Silva",
-        tipo: "vendedor",
-        telefone: "(27) 99988-7766",
-      });
-
-    if (userTableErr) {
-      console.error("Erro na tabela usuarios:", userTableErr);
-    }
-
-    // 3. Inserir ou buscar vendedor na tabela vendedores
-    console.log("Garantindo registro na tabela 'vendedores'...");
-    let { data: existingVend } = await supabase
-      .from("vendedores")
-      .select("*")
-      .eq("usuario_id", userId)
-      .maybeSingle();
-
-    if (!existingVend) {
-      const { data: createdVend, error: vendErr } = await supabase
-        .from("vendedores")
-        .insert({
-          usuario_id: userId,
-          nome_loja: "Sítio Vista Linda — Queijaria & Orgânicos",
-          descricao: "Produção familiar agroecológica de queijos artesanais curados e hortaliças frescas nas montanhas capixabas.",
-          cidade: "Domingos Martins - ES",
-        })
-        .select()
-        .single();
-
-      if (vendErr) {
-        console.error("Erro na tabela vendedores:", vendErr);
-      } else {
-        existingVend = createdVend;
-      }
-    }
-
-    if (!existingVend) {
-      console.error("Não foi possível criar o vendedor.");
-      return;
-    }
-
-    const vendedorId = existingVend.id;
-    console.log(`Vendedor ID configurado: ${vendedorId}`);
-
-    // 4. Cadastrar produtos de demonstração
-    console.log("Inserindo produtos da feira na tabela 'produtos'...");
     const produtosSeed = [
       {
         vendedor_id: vendedorId,
@@ -106,7 +33,7 @@ async function runSeed() {
         preco: 38.50,
         categoria: "Queijos & Laticínios",
         estoque_qtd: 14,
-        imagem_url: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=800&q=80",
+        imagem_url: "https://images.unsplash.com/photo-1552767059-ce182ead6c1b?auto=format&fit=crop&w=800&q=80",
         ativo: true,
       },
       {
@@ -116,7 +43,7 @@ async function runSeed() {
         preco: 29.90,
         categoria: "Mel & Geleias",
         estoque_qtd: 22,
-        imagem_url: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800&q=80",
+        imagem_url: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?auto=format&fit=crop&w=800&q=80",
         ativo: true,
       },
       {
@@ -136,7 +63,7 @@ async function runSeed() {
         preco: 35.00,
         categoria: "Hortifrúti",
         estoque_qtd: 12,
-        imagem_url: "https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=800&q=80",
+        imagem_url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
         ativo: true,
       },
       {
@@ -146,7 +73,7 @@ async function runSeed() {
         preco: 54.00,
         categoria: "Artesanato",
         estoque_qtd: 6,
-        imagem_url: "https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?auto=format&fit=crop&w=800&q=80",
+        imagem_url: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=800&q=80",
         ativo: true,
       },
       {
@@ -156,7 +83,7 @@ async function runSeed() {
         preco: 24.50,
         categoria: "Mel & Geleias",
         estoque_qtd: 15,
-        imagem_url: "https://images.unsplash.com/photo-1577937927133-66ef06acdf18?auto=format&fit=crop&w=800&q=80",
+        imagem_url: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80",
         ativo: true,
       },
       {
@@ -176,7 +103,7 @@ async function runSeed() {
         preco: 32.00,
         categoria: "Bebidas Artesanais",
         estoque_qtd: 20,
-        imagem_url: "https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=800&q=80",
+        imagem_url: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80",
         ativo: true,
       }
     ];
@@ -184,13 +111,13 @@ async function runSeed() {
     for (const prod of produtosSeed) {
       const { error: prodErr } = await supabase.from("produtos").insert(prod);
       if (prodErr) {
-        console.warn(`Aviso ao inserir produto ${prod.nome}:`, prodErr.message);
+        console.warn(`Erro ao inserir ${prod.nome}:`, prodErr.message);
       } else {
-        console.log(`✅ Inserido: ${prod.nome}`);
+        console.log(`✅ Inserido com foto temática: ${prod.nome}`);
       }
     }
 
-    console.log("✨ Seed concluído com sucesso no Supabase!");
+    console.log("✨ Banco de dados Supabase sincronizado com as fotos temáticas corretas!");
   } catch (error) {
     console.error("Erro durante o seed:", error);
   }
