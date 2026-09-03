@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Sprout, Heart, ShieldCheck, Truck, RefreshCw, Github } from "lucide-react";
+import { Sprout, ShieldCheck, RefreshCw, Github } from "lucide-react";
 
 export function Footer() {
   return (
@@ -112,10 +112,8 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
-        <p className="flex items-center justify-center gap-1">
-          FeiraLocal © {new Date().getFullYear()} — Feito com dedicação e
-          <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-          para a comunidade local.
+        <p>
+          FeiraLocal © {new Date().getFullYear()} — Todos os direitos reservados.
         </p>
       </div>
     </footer>
