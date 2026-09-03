@@ -57,7 +57,7 @@ export const MOCK_PRODUTOS: Produto[] = [
     preco: 29.90,
     categoria: "Mel & Geleias",
     estoque_qtd: 22,
-    imagem_url: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?auto=format&fit=crop&w=800&q=80",
+    imagem_url: "https://upload.wikimedia.org/wikipedia/commons/d/da/Small_Honey_Jar_with_Honeycomb_-_51330849013.jpg",
     ativo: true,
     criado_em: "2026-08-16T09:30:00Z",
     vendedor: MOCK_VENDEDORES[1],

@@ -31,7 +31,7 @@ const PRESET_IMAGENS = [
   },
   {
     nome: "Mel Puro",
-    url: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?auto=format&fit=crop&w=800&q=80",
+    url: "https://upload.wikimedia.org/wikipedia/commons/d/da/Small_Honey_Jar_with_Honeycomb_-_51330849013.jpg",
   },
   {
     nome: "Pão Rústico",
