@@ -323,8 +323,13 @@ const SCREENS = [
 
       report.screens[screen.id] = entry;
       save();
+      // fechar o contexto pode travar se o navegador ficou irresponsivo;
+      // corre contra um timeout para nao paralisar o lote inteiro
       try {
-        await context.close();
+        await Promise.race([
+          context.close(),
+          new Promise((res) => setTimeout(res, 15000)),
+        ]);
       } catch {
         /* contexto pode ja estar fechado */
       }
